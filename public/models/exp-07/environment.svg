@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="800" y1="0" x2="800" y2="670" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#191b19"/><stop offset=".48" stop-color="#39352c"/><stop offset=".78" stop-color="#76533b"/><stop offset="1" stop-color="#211a16"/>
+    </linearGradient>
+    <radialGradient id="sunset" cx="0" cy="0" r="1" gradientTransform="matrix(0 485 -730 0 1110 245)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e8a36a" stop-opacity=".72"/><stop offset=".35" stop-color="#a65d3f" stop-opacity=".24"/><stop offset="1" stop-color="#28201b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="800" y1="550" x2="800" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5b3b2a"/><stop offset=".28" stop-color="#39281f"/><stop offset="1" stop-color="#171412"/>
+    </linearGradient>
+    <linearGradient id="lantern" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff0be"/><stop offset=".45" stop-color="#f5b35e"/><stop offset="1" stop-color="#a94d2b"/>
+    </linearGradient>
+    <radialGradient id="mist"><stop stop-color="#d6a679" stop-opacity=".2"/><stop offset="1" stop-color="#d6a679" stop-opacity="0"/></radialGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b66d3d" stop-opacity=".55"/><stop offset="1" stop-color="#4b2e20" stop-opacity="0"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h1600v900H0z"/>
+  <path fill="url(#sunset)" d="M0 0h1600v700H0z"/>
+
+  <!-- Quiet mountain and garden layers sit behind the central book. -->
+  <path fill="#33342f" opacity=".78" transform="translate(0 -130)" d="m477 440 88-78 61 37 104-122 66 79 83-113 91 99 83-87 90 102 69-37 123 102v138H477z"/>
+  <path fill="#242521" opacity=".76" transform="translate(0 -130)" d="m735 446 79-69 54 31 93-106 76 70 88-92 64 63 86-64 112 92v128H735z"/>
+  <path stroke="#d5a47b" stroke-opacity=".28" stroke-width="3" transform="translate(0 -130)" d="m565 362 61 37 104-122 66 79 83-113 91 99 83-87 90 102"/>
+  <path fill="#4a463e" opacity=".62" d="m0 412 74-82 48 27 91-126 62 74 62-50 99 116v122H0zm1120 11 82-87 55 37 102-150 74 83 66-57 101 112v126h-480z"/>
+  <path stroke="#d4ac82" stroke-opacity=".24" stroke-width="3" d="m25 350 97-20 91-126 62 74 62-50 99 116m720 21 82-49 55 37 102-150 74 83 66-57 101 112"/>
+  <path fill="url(#mist)" d="M250 330h1200v270H250z"/>
+
+  <!-- Shoji screens and timber frames are kept near the edges to frame the book. -->
+  <g stroke="#171916" stroke-width="34" opacity=".96">
+    <path d="M278 0v548M444 0v506M1156 0v520M1322 0v552"/>
+    <path d="M238 111h247M238 290h247M238 470h247M1116 128h247M1116 309h247M1116 490h247"/>
+  </g>
+  <g stroke="#c8a77e" stroke-opacity=".18" stroke-width="5">
+    <path d="M295 0v532M461 0v532M1139 0v532M1305 0v532"/>
+    <path d="M238 126h247M238 306h247M238 486h247M1116 143h247M1116 324h247M1116 505h247"/>
+  </g>
+  <path fill="#201c18" opacity=".88" d="M238 0h247v34H238zm878 0h247v34h-247z"/>
+
+  <!-- Small distant pavilion silhouette, intentionally subdued. -->
+  <g stroke="#201d18" stroke-linejoin="round" opacity=".56">
+    <path stroke-width="10" d="m1020 405 101-38 101 38-17 11h-168zM1042 415v69m158-69v69m-158-3h158m-143-42h128"/>
+    <path stroke-width="7" d="m1037 406 84-47 84 47m-125-10h82"/>
+  </g>
+
+  <!-- Suspended lanterns at the sides. -->
+  <g>
+    <g transform="translate(340 0)">
+      <path stroke="#211a15" stroke-width="5" d="M0 0v93"/>
+      <path fill="#241c17" d="M-32 82h64v13h-64z"/>
+      <rect x="-26" y="94" width="52" height="92" rx="12" fill="url(#lantern)" opacity=".9"/>
+      <path stroke="#211a15" stroke-width="5" d="M-31 108h62m-62 63h62"/>
+      <ellipse cy="142" rx="94" ry="123" fill="#e8a75e" opacity=".18"/>
+    </g>
+    <g transform="translate(1260 0)">
+      <path stroke="#211a15" stroke-width="5" d="M0 0v93"/>
+      <path fill="#241c17" d="M-32 82h64v13h-64z"/>
+      <rect x="-26" y="94" width="52" height="92" rx="12" fill="url(#lantern)" opacity=".9"/>
+      <path stroke="#211a15" stroke-width="5" d="M-31 108h62M-31 171h62"/>
+      <ellipse cy="142" rx="94" ry="123" fill="#e8a75e" opacity=".18"/>
+    </g>
+  </g>
+
+  <!-- Maple boughs in the upper corners, delicate enough to remain atmospheric. -->
+  <g stroke="#2a1714" stroke-width="8" stroke-linecap="round" opacity=".9">
+    <path d="M0 61c130 45 151 141 253 171 62 18 105 12 154 63M1600 46c-111 60-149 135-244 163-75 22-129 22-193 81"/>
+  </g>
+  <g fill="#8f3528" opacity=".87">
+    <path d="M70 86c-34-36-35-62-24-81 35 20 45 44 24 81m32 14c2-49 20-71 44-78 10 42-5 69-44 78m54 36c-14-43-4-69 17-82 23 34 17 65-17 82m76 36c-33-38-29-67-10-87 32 27 35 59 10 87m51 30c-2-45 16-68 42-72 12 39-1 66-42 72m96 46c-32-37-28-65-7-84 31 27 33 57 7 84"/>
+    <path d="M1538 76c28-38 27-63 14-81-31 22-39 47-14 81m-43 22c-6-47-25-67-48-71-7 41 11 66 48 71m-61 37c10-43-2-67-24-78-19 35-10 64 24 78m-75 38c29-38 23-66 1-83-29 29-28 58-1 83m-56 37c-2-43-21-64-46-66-8 38 8 63 46 66m-93 49c28-37 23-63 0-80-28 29-25 56 0 80"/>
+  </g>
+  <g fill="#c05237" opacity=".72">
+    <path d="M30 191c-23-27-20-47-7-59 23 20 25 39 7 59m110 47c-21-26-17-47-2-57 20 21 20 40 2 57m145 54c-23-23-23-43-10-56 23 18 27 36 10 56m124 36c-24-24-22-44-8-57 22 19 24 38 8 57m1127-180c23-27 20-47 7-59-23 20-25 39-7 59m-110 47c21-26 17-47 2-57-20 21-20 40-2 57m-145 54c23-23 23-43 10-56-23 18-27 36-10 56m-124 36c24-24 22-44 8-57-22 19-24 38-8 57"/>
+  </g>
+
+  <!-- Warm wood / reflected lantern paths below the reading plane. -->
+  <path fill="url(#floor)" d="M0 538h1600v362H0z"/>
+  <path fill="url(#wood)" d="M0 545h1600v130H0z"/>
+  <g stroke="#d78c4b" stroke-opacity=".19" stroke-width="3">
+    <path d="M0 573h1600M0 619h1600M0 685h1600M0 779h1600M0 862h1600"/>
+    <path d="M260 540 90 900m410-360L380 900m850-360 174 360m-402-360 107 360"/>
+  </g>
+  <g fill="#f5b466" opacity=".26">
+    <path d="M124 190h29l-9 327h-18zm1320 0h29l-9 327h-18z"/>
+    <ellipse cx="400" cy="644" rx="155" ry="22"/><ellipse cx="1210" cy="633" rx="188" ry="24"/>
+  </g>
+  <path fill="url(#mist)" opacity=".48" d="M0 515h1600v210H0z"/>
+  <path fill="#100f0e" opacity=".14" d="M0 0h1600v900H0z"/>
+</svg>

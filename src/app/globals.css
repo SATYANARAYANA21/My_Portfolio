@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: 244 241 234; /* #F4F1EA */
+  --ink: 20 20 20;
+  --accent: 235 50 35; /* Red/Orange */
+  --film-edge: 20 20 20;
+
+  --grid-margin: max(1.5rem, 5vw);
+  --grid-gutter: clamp(1rem, 2vw, 1.5rem);
+  --section-pad: clamp(5rem, 10vw, 8rem);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-paper text-ink selection:bg-accent selection:text-paper;
+  }
+}
+
+@layer utilities {
+  /* ── Grain overlay ─────────────────────────────────── */
+  .grain {
+    position: relative;
+  }
+  .grain::before {
+    content: "";
+    position: fixed;
+    inset: -100%;
+    z-index: 9999;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    animation: grain 8s steps(10) infinite;
+  }
+
+  /* ── Halftone patterns ─────────────────────────────── */
+  .halftone-fade {
+    background-image: radial-gradient(circle, rgb(var(--ink)) 1px, transparent 1px);
+    background-size: 4px 4px;
+    mask-image: linear-gradient(to bottom, black, transparent);
+  }
+  .halftone {
+    background-image: radial-gradient(circle, rgb(var(--ink)) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+  .halftone-accent {
+    background-image: radial-gradient(circle, rgb(var(--accent)) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* ── Layout helpers ─────────────────────────────────── */
+  .wrap {
+    padding-left: var(--grid-margin);
+    padding-right: var(--grid-margin);
+  }
+
+  /* Swiss 14-column named-line grid.
+     repeat(14, [col] 1fr) creates lines named col 1 … col 15.
+     [content-start] / [content-end] allow grid-column: content
+     to span the entire usable area (used as mobile fallback). */
+  .grid-swiss {
+    display: grid;
+    grid-template-columns: [content-start] repeat(14, [col] 1fr) [content-end];
+    padding-left: var(--grid-margin);
+    padding-right: var(--grid-margin);
+    column-gap: var(--grid-gutter);
+  }
+
+  /* ── Film-strip dividers ────────────────────────────── */
+  .film-line {
+    border-top: 1px solid rgb(var(--film-edge) / 0.12);
+    border-bottom: 1px solid rgb(var(--film-edge) / 0.12);
+    background-color: rgb(var(--ink) / 0.025);
+  }
+  .rebate {
+    font-family: var(--font-mono, monospace);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgb(var(--ink) / 0.4);
+  }
+  .rebate-hi {
+    color: rgb(var(--ink));
+    font-weight: 600;
+  }
+
+  /* ── Dark sections ──────────────────────────────────── */
+  .ground-dark {
+    /* Invert colors locally so Tailwind utilities automatically adapt */
+    --ink: 244 241 234;
+    --paper: 20 20 20;
+    background-color: rgb(var(--paper));
+    color: rgb(var(--ink));
+  }
+
+  /* ── Typography helpers ─────────────────────────────── */
+  .eyebrow {
+    @apply font-mono text-[10px] uppercase tracking-ultrawide text-ink/70;
+  }
+  .chromatic-strong {
+    text-shadow: -2px 0 0 rgb(0 255 255 / 0.5), 2px 0 0 rgb(255 0 255 / 0.5);
+  }
+  .tategaki {
+    writing-mode: vertical-rl;
+  }
+  .comic-stamp {
+    font-family: var(--font-comic, cursive);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: 2px solid rgb(var(--ink));
+    padding: 0.1em 0.4em;
+    display: inline-block;
+    box-shadow: 3px 3px 0 rgb(var(--ink));
+  }
+  .text-stroke {
+    -webkit-text-stroke: 1px currentColor;
+    color: transparent;
+  }
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0) }
+  10% { transform: translate(-5%, -10%) }
+  20% { transform: translate(-15%, 5%) }
+  30% { transform: translate(7%, -25%) }
+  40% { transform: translate(-5%, 25%) }
+  50% { transform: translate(-15%, 10%) }
+  60% { transform: translate(15%, 0%) }
+  70% { transform: translate(0%, 15%) }
+  80% { transform: translate(3%, 35%) }
+  90% { transform: translate(-10%, 10%) }
+}
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: scale(0.85) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}

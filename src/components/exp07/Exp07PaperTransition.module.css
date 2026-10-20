@@ -1,0 +1,82 @@
+.layer {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+}
+
+.petal {
+  position: absolute;
+  top: 0;
+  left: var(--petal-left);
+  display: block;
+  width: var(--petal-size);
+  height: var(--petal-size);
+  color: var(--petal-color);
+  opacity: 0;
+  transform-origin: center;
+  animation: petalFall var(--petal-duration) cubic-bezier(.23, .61, .32, 1) var(--petal-delay) both;
+  will-change: transform, opacity;
+}
+
+.petal svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 1px 1px rgba(100, 39, 32, .14));
+}
+
+.background {
+  z-index: 1;
+  filter: blur(.45px);
+}
+
+.midground {
+  z-index: 2;
+}
+
+.foreground {
+  z-index: 3;
+}
+
+@keyframes petalFall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, var(--petal-start-y), var(--petal-depth)) scale(var(--petal-scale-start)) rotateZ(var(--petal-rotation-a));
+  }
+  8% {
+    opacity: var(--petal-opacity);
+  }
+  28% {
+    transform: translate3d(var(--petal-x-a), 22vh, var(--petal-depth)) scale(var(--petal-scale)) rotateX(8deg) rotateZ(var(--petal-rotation-a));
+  }
+  52% {
+    opacity: var(--petal-opacity);
+    transform: translate3d(var(--petal-x-b), 54vh, var(--petal-depth)) scale(var(--petal-scale)) rotateY(-9deg) rotateZ(var(--petal-rotation-b));
+  }
+  76% {
+    opacity: var(--petal-opacity-soft);
+    transform: translate3d(var(--petal-x-c), 80vh, var(--petal-depth)) scale(var(--petal-scale)) rotateX(-7deg) rotateZ(var(--petal-rotation-c));
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--petal-x-end), 114vh, var(--petal-depth)) scale(var(--petal-scale-end)) rotateY(8deg) rotateZ(var(--petal-rotation-end));
+  }
+}
+
+@media (max-width: 640px) {
+  .petal {
+    width: max(var(--petal-size), 15px);
+    height: max(var(--petal-size), 15px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer {
+    display: none;
+  }
+}

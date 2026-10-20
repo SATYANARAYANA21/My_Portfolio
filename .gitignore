@@ -1,0 +1,46 @@
+# Dependencies
+/node_modules/
+
+# Next.js output and local build recovery snapshots
+/.next/
+/.next-final-build-recovery/
+/.next-final-dev-recovery/
+/.next-postbuild-recovery/
+/.next-preintegration-build-recovery/
+/.next-preintegration-dev-recovery/
+/.next-recovery-backup/
+/out/
+/build/
+/tsconfig.tsbuildinfo
+
+# Local environment values and credentials
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
+# Local scratch, generators, vendored tools, and disposable outputs
+/scratch/
+/temp_js/
+/tools/
+/ffmpeg/
+/ffmpeg.zip
+/Skills-main/
+/extract*.js
+/find_*.js
+/generate-carousel.js
+/write_hero.js
+/1.css
+/2.css
+/3.css
+/css1.css
+/carousel.html
+/public/models/exp-05/video-16-smooth-test.mp4
+*.blend1
+
+# Operating system files
+.DS_Store
+Thumbs.db
