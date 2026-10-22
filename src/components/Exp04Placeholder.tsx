@@ -817,6 +817,18 @@ export default function Exp04Placeholder() {
     const iframe = iframeRef.current;
     const doc = iframe?.contentDocument;
     if (!doc) return;
+
+    const yunetraBook = doc.querySelector('.book-card[data-book="codex"]');
+    if (yunetraBook) {
+      const coverTitle = yunetraBook.querySelector<HTMLElement>('.cover-title');
+      const coverSubtitle = yunetraBook.querySelector('.cover-subtitle');
+      if (coverTitle) {
+        coverTitle.textContent = 'YUNETRA';
+        coverTitle.style.fontSize = 'clamp(18px, 2.2vw, 28px)';
+      }
+      if (coverSubtitle) coverSubtitle.textContent = 'VISION THAT UNITES POTENTIAL';
+      yunetraBook.setAttribute('aria-label', 'Open Yunetra details');
+    }
     
     // Ensure idempotency so we don't inject multiple times
     if (doc.getElementById('satya-overrides')) return;
@@ -1201,16 +1213,82 @@ export default function Exp04Placeholder() {
         font-size: clamp(24px, 3vw, 42px);
         writing-mode: vertical-rl;
       }
+      .satya-yunetra-page .satya-editorial-left,
+      .satya-yunetra-page .satya-editorial-right {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .satya-yunetra-page .satya-editorial-left { justify-content: flex-start; }
+      .satya-yunetra-page .satya-editorial-left-top,
+      .satya-yunetra-page .satya-editorial-right-top { flex: 0 0 auto; }
+      .satya-yunetra-content {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding-right: 8px;
+        scrollbar-color: rgba(138, 56, 47, .38) transparent;
+        scrollbar-width: thin;
+      }
+      .satya-yunetra-left-content { flex: 1; margin-top: 14px; }
+      .satya-yunetra-right-content { flex: 1; margin-top: 14px; padding-bottom: 56px; }
+      .satya-yunetra-section { margin: 0 0 20px; }
+      .satya-yunetra-section:last-child { margin-bottom: 0; }
+      .satya-yunetra-section .satya-editorial-label { margin-bottom: 5px; }
+      .satya-yunetra-section .satya-editorial-copy,
+      .satya-yunetra-section .satya-editorial-note {
+        font-size: clamp(11px, .9vw, 13px);
+        line-height: 1.48;
+      }
+      .satya-yunetra-focus { color: #71634e; font-size: 11px; line-height: 1.5; }
+      .satya-yunetra-flow { display: flex; flex-wrap: wrap; gap: 5px 8px; margin-top: 7px; }
+      .satya-yunetra-flow span { color: #332f28; font-size: 10px; line-height: 1.35; }
+      .satya-yunetra-flow span:not(:last-child)::after { content: '  →'; color: #9b4034; }
+      .satya-yunetra-scores { display: grid; gap: 4px; margin-top: 7px; }
+      .satya-yunetra-score-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid rgba(67, 54, 39, .16);
+        color: #3e3a32;
+        font-size: 11px;
+        line-height: 1.35;
+      }
+      .satya-yunetra-score-row strong { color: #8a382f; font-family: var(--mono); font-size: 10px; white-space: nowrap; }
+      .satya-yunetra-links {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        flex: 0 0 auto;
+        justify-content: flex-start;
+        gap: 16px;
+        padding-top: 10px;
+      }
+      .satya-yunetra-link {
+        color: #8a382f;
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: .12em;
+        text-decoration: none;
+      }
+      .satya-yunetra-link:hover,
+      .satya-yunetra-link:focus-visible { color: #29251d; text-decoration: underline; text-underline-offset: 3px; }
       @media (max-width: 900px) {
         body[data-mode="detail"] .detail-panel {
-          top: calc(100svh + 48px) !important;
-          right: 6% !important;
-          bottom: auto !important;
-          left: 6% !important;
+          top: 16px !important;
+          right: 16px !important;
+          bottom: 16px !important;
+          left: 16px !important;
           width: auto !important;
           height: auto !important;
           min-height: 0 !important;
-          padding-bottom: 90px;
+          max-height: calc(100dvh - 32px) !important;
+          overflow-y: auto !important;
+          overscroll-behavior: contain;
+          padding-bottom: 0;
         }
         .satya-editorial-page {
           position: relative;
@@ -1227,9 +1305,15 @@ export default function Exp04Placeholder() {
         .satya-editorial-right { padding-top: 34px; padding-bottom: 78px; }
         .satya-editorial-title { font-size: clamp(40px, 8vw, 62px); }
         .satya-editorial-footer { right: clamp(22px, 5vw, 42px); bottom: 24px; left: clamp(22px, 5vw, 42px); }
+        .satya-yunetra-page .satya-editorial-left,
+        .satya-yunetra-page .satya-editorial-right { overflow: visible; }
+        .satya-yunetra-page .satya-editorial-left { justify-content: flex-start; }
+        .satya-yunetra-content { flex: 0 0 auto; overflow: visible; padding-right: 0; }
+        .satya-yunetra-right-content { padding-bottom: 0; }
+        .satya-yunetra-page .satya-editorial-footer { position: relative; right: auto; bottom: auto; left: auto; margin-top: 18px; }
       }
       @media (max-width: 560px) {
-        body[data-mode="detail"] .detail-panel { right: 16px !important; left: 16px !important; }
+        body[data-mode="detail"] .detail-panel { top: 12px !important; right: 12px !important; bottom: 12px !important; left: 12px !important; max-height: calc(100dvh - 24px) !important; }
         .satya-editorial-left,
         .satya-editorial-right { min-height: 390px; padding-right: 22px; padding-left: 22px; }
         .satya-editorial-page::after { display: none; }
@@ -1311,6 +1395,16 @@ export default function Exp04Placeholder() {
           return node;
         }
 
+        function editorialSection(parent, label, copy) {
+          var section = element('section', 'satya-yunetra-section');
+          section.append(
+            element('h2', 'satya-editorial-label', label),
+            element('p', 'satya-editorial-copy', copy)
+          );
+          parent.append(section);
+          return section;
+        }
+
         function renderEditorialPage() {
           if (!detailPanel || !detailTitle || !detailDescription) return;
           var page = detailPanel.querySelector('#satya-editorial-page');
@@ -1327,14 +1421,97 @@ export default function Exp04Placeholder() {
           var year = detailYear ? detailYear.textContent.trim() : '';
           var selectedBook = document.querySelector('.book-card.selected');
           var bookId = selectedBook ? selectedBook.getAttribute('data-book') : '';
+          var isYunetra = bookId === 'codex';
+          if (isYunetra) {
+            title = 'YUNETRA';
+            description = 'A peer-to-peer skill exchange platform where students connect, learn, teach, and grow through skill-based collaboration.';
+            detailTitle.textContent = title;
+            detailDescription.textContent = description;
+          }
           var projects = {
-            codex: { subtitle: 'The Agentic Engineer', number: '01', steps: ['Clear intent', 'Repository', 'Edit & run tools', 'Verified change'] },
+            codex: { subtitle: 'VISION THAT UNITES POTENTIAL', number: '01', steps: ['Build a profile', 'Discover peers', 'Match by skills', 'Learn together'] },
             cursor: { subtitle: 'The Augmented Editor', number: '02', steps: ['Editor', 'Selection', 'Predict next change', 'Prompt to production'] },
             claude: { subtitle: 'The Quiet Terminal', number: '03', steps: ['Terminal', 'Codebase context', 'Files & tools', 'Inspectable conversation'] }
           };
           var project = projects[bookId] || { subtitle: '', number: '—', steps: [] };
 
           page.replaceChildren();
+          page.classList.toggle('satya-yunetra-page', isYunetra);
+          page.setAttribute('aria-label', isYunetra ? 'Yunetra project case study' : 'Open project field manual');
+          if (isYunetra) {
+            var left = element('section', 'satya-editorial-left');
+            left.setAttribute('aria-label', 'Yunetra overview');
+            var leftTop = element('div', 'satya-editorial-left-top');
+            var header = element('header', 'satya-editorial-header');
+            header.append(
+              element('span', 'satya-editorial-kicker', 'FIELD NOTE · 01'),
+              element('span', 'satya-editorial-index', 'YUNETRA / ' + year)
+            );
+            leftTop.append(header, element('h1', 'satya-editorial-title', title));
+            leftTop.append(element('p', 'satya-editorial-subtitle', 'VISION THAT UNITES POTENTIAL'));
+            var leftContent = element('div', 'satya-yunetra-content satya-yunetra-left-content');
+            editorialSection(leftContent, 'PROJECT TYPE', 'Peer-to-peer learning platform');
+            var focus = editorialSection(leftContent, 'FOCUS', '');
+            focus.querySelector('.satya-editorial-copy').className = 'satya-yunetra-focus';
+            focus.querySelector('.satya-yunetra-focus').textContent = 'Skill exchange · Matching · Sessions · Credits · Verification · Community';
+            editorialSection(leftContent, '01 / ORIGIN', 'Students already hold valuable knowledge they can teach one another. Yunetra gives that peer knowledge a structured home: students build profiles, discover useful matches, schedule learning sessions, verify skills, and learn in a shared community.');
+            editorialSection(leftContent, '02 / PROBLEM → RESPONSE', 'Learning can be costly, one-directional, or hard to access. Yunetra makes peer learning reciprocal: students offer what they know, find what they want to learn, and build a record of shared progress.');
+            var exchange = editorialSection(leftContent, '03 / SESSION + CREDIT LOOP', 'A learner’s session request places the credit transaction in pending status. Both participants confirm completion before the teacher receives the credit; a dispute can trigger a refund.');
+            var flow = element('div', 'satya-yunetra-flow');
+            ['Profile', 'Discover', 'Match', 'Request', 'Learn', 'Confirm', 'Release'].forEach(function (step) {
+              flow.append(element('span', '', step));
+            });
+            exchange.append(flow);
+            var leftFooter = element('footer', 'satya-editorial-left-bottom');
+            leftFooter.append(
+              element('span', 'satya-editorial-colophon', 'Every student is a teacher and a learner.'),
+              element('span', 'satya-editorial-seal', '結')
+            );
+            left.append(leftTop, leftContent, leftFooter);
+
+            var right = element('section', 'satya-editorial-right');
+            right.setAttribute('aria-label', 'Yunetra systems and project links');
+            var rightHeader = element('header', 'satya-editorial-right-top');
+            rightHeader.append(
+              element('span', 'satya-editorial-kicker', 'SYSTEMS / FIELD NOTES'),
+              element('span', 'satya-editorial-index', '01 — 09')
+            );
+            var rightContent = element('div', 'satya-yunetra-content satya-yunetra-right-content');
+            var matching = editorialSection(rightContent, '04 / SMART MATCHING · 100 POINTS', 'The score combines bidirectional skill overlap, teacher rating, completed-session experience, and a same-college bonus. Match reasons are generated for the strongest peer results.');
+            var scores = element('div', 'satya-yunetra-scores');
+            [
+              ['Bidirectional skill overlap', '50'],
+              ['Teacher rating', '25'],
+              ['Session experience', '15'],
+              ['Same college', '10']
+            ].forEach(function (item) {
+              var row = element('div', 'satya-yunetra-score-row');
+              row.append(element('span', '', item[0]), element('strong', '', item[1] + ' PTS'));
+              scores.append(row);
+            });
+            matching.append(scores);
+            editorialSection(rightContent, '05 / VERIFICATION + REPUTATION', 'Skill checks use five MCQ answers; three correct answers pass. Teaching activity can earn First Step, Rising Teacher, Community Pillar, and per-skill Mentor Level badges.');
+            editorialSection(rightContent, '06 / COMMUNITY + ARENA', 'The source includes following, connections, an activity feed, shared resources with save and upvote actions, and Arena challenges across Tech Development, UI/UX, Graphic Design, Video Editing, VFX & Motion, Content Writing, Digital Marketing, Music Production, Photography, Business Strategy, Data Analytics, and Social Impact.');
+            editorialSection(rightContent, '07 / TECHNICAL ARCHITECTURE', 'Next.js 14 · React 18 · TypeScript · Route Handlers · NextAuth credentials / JWT · Mongoose · MongoDB. UI: Tailwind CSS · Framer Motion · Lucide React · Radix UI Slot. Browser → App Router → route handlers → authentication / validation → Mongoose → MongoDB.');
+            editorialSection(rightContent, '08 / ENGINEERING DETAILS', 'Server-side authentication checks · protected dashboard routes · route-specific validation · MongoDB persistence · JWT-backed sessions · credit transaction lifecycle · session-state management · matching score calculation · skill verification.');
+            editorialSection(rightContent, '09 / PROJECT STATUS', 'Yunetra is actively developed. The current source includes authentication, profiles, peer discovery, sessions, credits, verification, badges, network features, shared resources, and Arena challenges. Public production deployment is not claimed here.');
+            var rightFooter = element('footer', 'satya-editorial-footer satya-yunetra-links');
+            var githubLink = element('a', 'satya-yunetra-link', 'GITHUB ↗');
+            githubLink.href = 'https://github.com/SATYANARAYANA21/yunetra';
+            githubLink.target = '_blank';
+            githubLink.rel = 'noopener noreferrer';
+            githubLink.setAttribute('aria-label', 'Open Yunetra GitHub repository in a new tab');
+            var liveLink = element('a', 'satya-yunetra-link', 'LIVE ↗');
+            liveLink.href = 'https://yunetra.vercel.app/';
+            liveLink.target = '_blank';
+            liveLink.rel = 'noopener noreferrer';
+            liveLink.setAttribute('aria-label', 'Open Yunetra live project in a new tab');
+            rightFooter.append(githubLink, liveLink);
+            right.append(rightHeader, rightContent, rightFooter);
+            page.append(left, right);
+            return;
+          }
+
           var left = element('section', 'satya-editorial-left');
           left.setAttribute('aria-label', 'Project identity and overview');
           var leftTop = element('div', 'satya-editorial-left-top');

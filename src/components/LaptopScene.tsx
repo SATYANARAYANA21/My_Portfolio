@@ -14,7 +14,7 @@
  *   continuous rotation — never overrides or fights the cinematic spin.
  */
 
-import { useRef, useEffect, useState, Suspense } from 'react';
+import { useRef, useEffect, useState, Suspense, type MutableRefObject } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import * as THREE from 'three';
@@ -81,7 +81,7 @@ useGLTF.preload(GLB_PATH);
 const AUTO_ROT_SPEED = (Math.PI * 2) / (60 * 24);
 
 // ── Laptop mesh ──────────────────────────────────────────────────────────────
-function Laptop({ mouse }: { mouse: MouseTarget }) {
+function Laptop({ mouse }: { mouse: MutableRefObject<MouseTarget> }) {
   const groupRef = useRef<THREE.Group>(null!);
   
   // Cinematic sequence refs
@@ -155,8 +155,8 @@ function Laptop({ mouse }: { mouse: MouseTarget }) {
     }
 
     // Smooth mouse influence — subtle tilt only
-    mouseSmooth.current.x += (mouse.y * 0.18 - mouseSmooth.current.x) * 0.04;
-    mouseSmooth.current.y += (mouse.x * 0.10 - mouseSmooth.current.y) * 0.04;
+    mouseSmooth.current.x += (mouse.current.y * 0.18 - mouseSmooth.current.x) * 0.04;
+    mouseSmooth.current.y += (mouse.current.x * 0.10 - mouseSmooth.current.y) * 0.04;
 
     groupRef.current.rotation.x = mouseSmooth.current.x;
     groupRef.current.rotation.y = autoRotY.current + mouseSmooth.current.y;
@@ -176,7 +176,7 @@ function Laptop({ mouse }: { mouse: MouseTarget }) {
 }
 
 // ── Scene inner ──────────────────────────────────────────────────────────────
-function LaptopSceneInner({ mouse }: { mouse: MouseTarget }) {
+function LaptopSceneInner({ mouse }: { mouse: MutableRefObject<MouseTarget> }) {
   return (
     <>
       <ambientLight intensity={0.45} />
@@ -198,32 +198,45 @@ function LaptopSceneInner({ mouse }: { mouse: MouseTarget }) {
 
 // ── Exported canvas ──────────────────────────────────────────────────────────
 export default function LaptopCanvas() {
-  const [mouse, setMouse] = useState<MouseTarget>({ x: 0, y: 0 });
+  const mouse = useRef<MouseTarget>({ x: 0, y: 0 });
+  const canvasHostRef = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
-      setMouse({
+      mouse.current = {
         x:  (e.clientX / window.innerWidth  - 0.5) * 2,
         y: -(e.clientY / window.innerHeight - 0.5) * 2,
-      });
+      };
     };
     window.addEventListener('mousemove', onMove);
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
+  useEffect(() => {
+    const host = canvasHostRef.current;
+    if (!host) return;
+    const observer = new IntersectionObserver(([entry]) => setIsInView(entry.isIntersecting), { threshold: 0.01 });
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Canvas
-      camera={{ position: [0, 0.5, 6.1], fov: 32 }}
-      dpr={[1, 1.5]}
-      gl={{
-        alpha: true,
-        antialias: true,
-        toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.1,
-      }}
-      style={{ background: 'transparent' }}
-    >
-      <LaptopSceneInner mouse={mouse} />
-    </Canvas>
+    <div ref={canvasHostRef} className="h-full w-full">
+      <Canvas
+        camera={{ position: [0, 0.5, 6.1], fov: 32 }}
+        dpr={[1, 1.5]}
+        frameloop={isInView ? 'always' : 'demand'}
+        gl={{
+          alpha: true,
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.1,
+        }}
+        style={{ background: 'transparent' }}
+      >
+        <LaptopSceneInner mouse={mouse} />
+      </Canvas>
+    </div>
   );
 }

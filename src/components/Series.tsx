@@ -731,13 +731,17 @@ function CardContent({ skill, index, isSelected }: {
    SKILL FRAME
 ───────────────────────────────────────────────────────────────────────────── */
 function SkillFrame({
-  skill, index, selectedIndex, onSelect, onHoverChange,
+  skill, index, selectedIndex, onSelect, onHoverChange, frameWidth, frameHeight, radius, compact,
 }: {
   skill:         (typeof SKILLS)[number];
   index:         number;
   selectedIndex: number | null;
   onSelect:      (i: number | null) => void;
   onHoverChange: (i: number | null) => void;
+  frameWidth:    number;
+  frameHeight:   number;
+  radius:        number;
+  compact:       boolean;
 }) {
   const isSelected    = selectedIndex === index;
   const isAnySelected = selectedIndex !== null;
@@ -757,18 +761,18 @@ function SkillFrame({
   };
 
   const transform = isSelected
-    ? `rotateY(${angle}rad) translateZ(300px) scale(1.7)`
-    : `rotateY(${angle}rad) translateZ(${RADIUS}px) scale(1)`;
+    ? `rotateY(${angle}rad) translateZ(${compact ? 80 : 300}px) scale(${compact ? 1.08 : 1.7})`
+    : `rotateY(${angle}rad) translateZ(${radius}px) scale(1)`;
 
   return (
     <div
       style={{
         position:       "absolute",
         top:            0, left: 0,
-        width:          `${FRAME_W}px`,
-        height:         `${FRAME_H}px`,
-        marginLeft:     `${-FRAME_W / 2}px`,
-        marginTop:      `${-FRAME_H / 2}px`,
+        width:          `${frameWidth}px`,
+        height:         `${frameHeight}px`,
+        marginLeft:     `${-frameWidth / 2}px`,
+        marginTop:      `${-frameHeight / 2}px`,
         transform,
         transformStyle: "preserve-3d",
         transition:     "transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s, filter 0.6s",
@@ -801,7 +805,7 @@ function SkillFrame({
         </div>
 
         {/* ── Awakening energy border (only on selected) ── */}
-        {isSelected && <AwakeningBorder w={FRAME_W} h={FRAME_H}/>}
+        {isSelected && <AwakeningBorder w={frameWidth} h={frameHeight}/>}
       </div>
     </div>
   );
@@ -821,6 +825,25 @@ export default function Series() {
 
   const [hoveredIndex,  setHoveredIndex]  = useState<number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [stageWidth, setStageWidth] = useState(1280);
+  const [isArchiveInView, setIsArchiveInView] = useState(false);
+
+  useEffect(() => {
+    const node = stickyRef.current;
+    if (!node) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const nextWidth = entry.contentRect.width;
+      if (nextWidth > 0) setStageWidth(nextWidth);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const compactLayout = stageWidth < 768;
+  const frameWidth = compactLayout ? Math.max(250, Math.min(320, stageWidth * 0.76)) : FRAME_W;
+  const frameHeight = compactLayout ? frameWidth * 0.75 : FRAME_H;
+  const radius = compactLayout ? Math.max(460, stageWidth * 1.24) : RADIUS;
+  const coreSize = compactLayout ? Math.min(500, stageWidth * 0.78) : 500;
 
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
 
@@ -828,9 +851,13 @@ export default function Series() {
 
   const scrollCam = useTransform(smoothProgress, (c) => {
     const eased = c < 0.5 ? 2 * c * c : 1 - Math.pow(-2 * c + 2, 2) / 2;
-    const m     = 1200 * (1 - eased) + 310 * eased;
+    const m     = compactLayout
+      ? 1500 * (1 - eased) + 1100 * eased
+      : 1200 * (1 - eased) + 310 * eased;
     const d     = eased * Math.PI * 1.5 - 0.28;
-    const camY  = 140 * (1 - eased) + 25 * eased + 170 * Math.sin(eased * Math.PI);
+    const camY  = compactLayout
+      ? 90 * (1 - eased) + 18 * eased + 90 * Math.sin(eased * Math.PI)
+      : 140 * (1 - eased) + 25 * eased + 170 * Math.sin(eased * Math.PI);
     const pitch = Math.atan2(camY, m);
     const dist  = Math.hypot(m, camY);
     return { dist, pitch, d };
@@ -849,39 +876,72 @@ export default function Series() {
       const r = sticky.getBoundingClientRect();
       mouseTarget.current.x = ((e.clientX - r.left) / r.width  - 0.5) * 2;
       mouseTarget.current.y = ((e.clientY - r.top)  / r.height - 0.5) * 2;
+      startPointerLoop();
     };
-    const onLeave = () => { mouseTarget.current.x = 0; mouseTarget.current.y = 0; };
+    const onLeave = () => {
+      mouseTarget.current.x = 0;
+      mouseTarget.current.y = 0;
+      startPointerLoop();
+    };
 
     const DEG         = Math.PI / 180;
     const MOUSE_ROT_Y = 160 * DEG;
     const MOUSE_ROT_X = 30  * DEG;
     const LERP        = 0.08;
 
-    const loop = () => {
-      mouseSmooth.current.x += (mouseTarget.current.x - mouseSmooth.current.x) * LERP;
-      mouseSmooth.current.y += (mouseTarget.current.y - mouseSmooth.current.y) * LERP;
+    let isVisible = false;
 
+    const syncWorldTransform = () => {
       const { dist, pitch, d } = scrollCam.get();
       const mRotY = mouseSmooth.current.x * MOUSE_ROT_Y;
       const mRotX = mouseSmooth.current.y * MOUSE_ROT_X;
-
       world.style.transform = [
         `translateZ(${-dist}px)`,
         `rotateX(${pitch + mRotX}rad)`,
         `rotateY(${-d + mRotY}rad)`,
       ].join(" ");
+    };
 
-      rafId.current = requestAnimationFrame(loop);
+    const loop = () => {
+      rafId.current = 0;
+      if (!isVisible || isCoarse) return;
+      mouseSmooth.current.x += (mouseTarget.current.x - mouseSmooth.current.x) * LERP;
+      mouseSmooth.current.y += (mouseTarget.current.y - mouseSmooth.current.y) * LERP;
+      syncWorldTransform();
+
+      const unsettled = Math.abs(mouseTarget.current.x - mouseSmooth.current.x) > 0.001
+        || Math.abs(mouseTarget.current.y - mouseSmooth.current.y) > 0.001;
+      if (unsettled) rafId.current = requestAnimationFrame(loop);
     };
 
     if (!isCoarse) {
       sticky.addEventListener("pointermove",  onMove,  { passive: true });
       sticky.addEventListener("pointerleave", onLeave, { passive: true });
     }
-    rafId.current = requestAnimationFrame(loop);
+    function startPointerLoop() {
+      if (!isVisible || isCoarse || rafId.current) return;
+      rafId.current = requestAnimationFrame(loop);
+    };
+    const stopLoop = () => {
+      if (!rafId.current) return;
+      cancelAnimationFrame(rafId.current);
+      rafId.current = 0;
+    };
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      setIsArchiveInView(isVisible);
+      if (isVisible) syncWorldTransform();
+      else stopLoop();
+    }, { threshold: 0.01 });
+    visibilityObserver.observe(containerRef.current ?? sticky);
+    const stopScrollSubscription = scrollCam.on("change", () => {
+      if (isVisible) syncWorldTransform();
+    });
 
     return () => {
-      cancelAnimationFrame(rafId.current);
+      stopScrollSubscription();
+      visibilityObserver.disconnect();
+      stopLoop();
       if (!isCoarse) {
         sticky.removeEventListener("pointermove",  onMove);
         sticky.removeEventListener("pointerleave", onLeave);
@@ -923,6 +983,7 @@ export default function Series() {
         ref={stickyRef}
         className="sticky top-0 h-screen w-full overflow-hidden"
         style={{
+          height: "100dvh",
           perspective:         "1300px",
           backgroundImage:     "url('/models/exp-03/skills-background.png.png')",
           backgroundSize:      "cover",
@@ -953,6 +1014,10 @@ export default function Series() {
                 selectedIndex={selectedIndex}
                 onSelect={setSelectedIndex}
                 onHoverChange={setHoveredIndex}
+                frameWidth={frameWidth}
+                frameHeight={frameHeight}
+                radius={radius}
+                compact={compactLayout}
               />
             ))}
 
@@ -961,15 +1026,15 @@ export default function Series() {
               className="pointer-events-none"
               style={{
                 position:       "absolute",
-                width:          "500px",
-                height:         "500px",
-                left:           "-250px",
-                top:            "-250px",
+                width:          `${coreSize}px`,
+                height:         `${coreSize}px`,
+                left:           `${-coreSize / 2}px`,
+                top:            `${-coreSize / 2}px`,
                 y:              camObjY,
                 transformStyle: "preserve-3d",
               }}
             >
-              <Canvas camera={{ position: [0, 0, 9], fov: 45 }} gl={{ antialias: true, alpha: true }}>
+              <Canvas camera={{ position: [0, 0, 9], fov: 45 }} gl={{ antialias: true, alpha: true }} frameloop={isArchiveInView ? "always" : "demand"}>
                 <ambientLight intensity={1.8}/>
                 <directionalLight position={[10, 15, 10]} intensity={3.5}/>
                 <directionalLight
@@ -998,7 +1063,7 @@ export default function Series() {
               </span>
             </div>
             <div className="text-right">
-              <span className="block font-mono text-step--1 uppercase tracking-ultrawide text-ink/70">
+              <span className="hidden font-mono text-step--1 uppercase tracking-ultrawide text-ink/70 sm:block">
                 {SKILLS.length} frames · technical index
               </span>
               <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-ultrawide text-ink/40">

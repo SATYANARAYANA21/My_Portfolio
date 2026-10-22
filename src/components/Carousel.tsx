@@ -114,6 +114,7 @@ function CarouselFrame({
   src,
   i,
   progress,
+  frameWidth,
   isActive,
   isLast,
   onPlayVideo,
@@ -121,18 +122,21 @@ function CarouselFrame({
   src: string;
   i: number;
   progress: MotionValue<number>;
+  frameWidth: number;
   isActive: boolean;
   isLast: boolean;
   onPlayVideo: () => void;
 }) {
   const relativeOffset = useTransform(progress, (p) => i - p);
+  const orbitRadius = frameWidth * 1.52;
+  const frameScale = frameWidth / 480;
 
   const transform = useTransform(relativeOffset, (offset) => {
     const angleDeg = offset * 41.25;
     const angleRad = (angleDeg * Math.PI) / 180;
-    const x = Math.sin(angleRad) * 730;
-    const z = Math.cos(angleRad) * 730 - 730;
-    const y = offset * 72;
+    const x = Math.sin(angleRad) * orbitRadius;
+    const z = Math.cos(angleRad) * orbitRadius - orbitRadius;
+    const y = offset * 72 * frameScale;
     const rotateZ = offset * 1.4;
     return `translate(-50%, -50%) translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${angleDeg.toFixed(2)}deg) rotateZ(${rotateZ.toFixed(2)}deg)`;
   });
@@ -153,7 +157,7 @@ function CarouselFrame({
   return (
     <motion.figure
       className="absolute will-change-transform"
-      style={{ width: '480px', transform, opacity, zIndex, visibility: visibility as any }}
+      style={{ width: `${frameWidth}px`, transform, opacity, zIndex, visibility: visibility as any }}
     >
       <div
         className={`relative aspect-[3/2] overflow-hidden border-2 bg-ink/10 transition-[border-color,box-shadow] duration-500 ${
@@ -165,7 +169,7 @@ function CarouselFrame({
         {isLast ? (
           <Frame16Cover onPlay={onPlayVideo} isActive={isActive} />
         ) : (
-          <img src={src} alt="" draggable="false" className="h-full w-full object-cover" />
+          <img src={src} alt="" draggable="false" loading="lazy" decoding="async" className="h-full w-full object-cover" />
         )}
         <figcaption className="pointer-events-none absolute bottom-0 left-0 flex items-center gap-2 bg-ink px-2.5 py-1 font-mono text-[10px] uppercase tracking-ultrawide text-paper">
           <span className="text-accent">&#9672;</span>{' '}
@@ -179,6 +183,7 @@ function CarouselFrame({
 // ─── Main Carousel export ─────────────────────────────────────────────────────
 export default function Carousel() {
   const containerRef      = useRef<HTMLDivElement>(null);
+  const [stageWidth, setStageWidth] = useState(1280);
   const [activeFrame, setActiveFrame] = useState(0);
   const [modalOpen, setModalOpen]     = useState(false);
 
@@ -200,6 +205,18 @@ export default function Carousel() {
   });
 
   const progress = useTransform(smoothProgress, [0, 1], [0, LAST_FRAME]);
+  const frameWidth = Math.min(480, Math.max(280, stageWidth * 0.88));
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const nextWidth = entry.contentRect.width;
+      if (nextWidth > 0) setStageWidth(nextWidth);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   // Only call setActiveFrame when the modal is CLOSED — eliminates all React
   // state updates (and the re-renders they cause) during video playback.
@@ -207,8 +224,9 @@ export default function Carousel() {
     return progress.on('change', (v) => {
       if (modalOpenRef.current) return; // modal open → skip re-render
       const next = Math.max(0, Math.min(LAST_FRAME, Math.round(v)));
-      setActiveFrame(next);
+      if (next === activeFrameRef.current) return;
       activeFrameRef.current = next;
+      setActiveFrame(next);
     });
   }, [progress]);
 
@@ -318,7 +336,7 @@ export default function Carousel() {
 
         {/* 280vh scrollable container — drives the 3D carousel via scroll progress */}
         <div ref={containerRef} className="relative mt-12" style={{ height: '280vh' }}>
-          <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <div className="sticky top-0 h-screen w-full overflow-hidden" style={{ height: '100dvh' }}>
             <span
               aria-hidden="true"
               className="halftone-fade pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -344,6 +362,7 @@ export default function Carousel() {
                     src={src}
                     i={i}
                     progress={progress}
+                    frameWidth={frameWidth}
                     isActive={activeFrame === i}
                     isLast={i === LAST_FRAME}
                     onPlayVideo={openModal}
@@ -358,10 +377,10 @@ export default function Carousel() {
                 <span className="text-accent">&#9672;</span>{' '}
                 {String(activeFrame + 1).padStart(2, '0')} / {TOTAL_FRAMES} — EXPLORE THE MOMENTS — MOVE THROUGH THE ARCHIVE
               </p>
-              <div className="pointer-events-auto flex items-center gap-6">
+              <div className="pointer-events-auto flex max-w-[calc(100vw-2rem)] flex-wrap items-center justify-center gap-3 sm:gap-6">
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none grid h-12 w-12 place-items-center border-2 border-ink bg-paper font-comic text-step-1 text-ink shadow-[3px_3px_0_rgb(var(--ink))]"
+                  className="pointer-events-none hidden h-12 w-12 place-items-center border-2 border-ink bg-paper font-comic text-step-1 text-ink shadow-[3px_3px_0_rgb(var(--ink))] sm:grid"
                 >
                   &#9672;
                 </div>
@@ -371,19 +390,24 @@ export default function Carousel() {
                       key={i}
                       onClick={() => scrollToFrame(i)}
                       aria-label={`Go to frame ${i + 1}`}
-                      className="h-2 rounded-full transition-all"
-                      style={{
-                        width:      activeFrame === i ? '26px' : '8px',
-                        background: activeFrame === i
-                          ? 'rgb(var(--accent))'
-                          : 'rgb(var(--ink) / 0.25)',
-                      }}
-                    />
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full p-0 sm:h-2 sm:w-auto"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="block h-2 rounded-full transition-all"
+                        style={{
+                          width: activeFrame === i ? '26px' : '8px',
+                          background: activeFrame === i
+                            ? 'rgb(var(--accent))'
+                            : 'rgb(var(--ink) / 0.25)',
+                        }}
+                      />
+                    </button>
                   ))}
                 </div>
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none grid h-12 w-12 place-items-center border-2 border-ink bg-paper font-comic text-step-1 text-ink shadow-[3px_3px_0_rgb(var(--ink))]"
+                  className="pointer-events-none hidden h-12 w-12 place-items-center border-2 border-ink bg-paper font-comic text-step-1 text-ink shadow-[3px_3px_0_rgb(var(--ink))] sm:grid"
                 >
                   &#9672;
                 </div>

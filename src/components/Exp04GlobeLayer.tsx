@@ -623,9 +623,11 @@ function DetailPanel({
 ───────────────────────────────────────────────────────────────────────────── */
 export default function Exp04GlobeLayer() {
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isInView, setIsInView] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const sceneRef = useRef<HTMLDivElement>(null);
 
   const handleHover = (id: string | null) => {
     setHoveredId(id);
@@ -649,8 +651,17 @@ export default function Exp04GlobeLayer() {
     return () => q.removeEventListener('change', upd);
   }, []);
 
+  useEffect(() => {
+    const node = sceneRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => setIsInView(entry.isIntersecting), { threshold: 0.01 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
+      ref={sceneRef}
       className="absolute inset-0 z-10 overflow-hidden"
       aria-label="EXP 04 — Project Arcade"
     >
@@ -724,7 +735,7 @@ export default function Exp04GlobeLayer() {
       <Canvas
         camera={{ position: [0, 0, 10.5], fov: 43 }}
         dpr={[1, 1.35]}
-        frameloop={reducedMotion ? 'demand' : 'always'}
+        frameloop={reducedMotion || !isInView ? 'demand' : 'always'}
         gl={{
           alpha: true,
           antialias: true,

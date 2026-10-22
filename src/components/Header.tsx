@@ -9,9 +9,9 @@ export default function Header() {
           SATYA
           <span className="font-jp text-step--1 text-accent">框</span>
         </a>
-        <button className="font-mono text-[11px] uppercase tracking-ultrawide transition-opacity hover:opacity-60">
+        <a href="#say-hello" className="font-mono text-[11px] uppercase tracking-ultrawide transition-opacity hover:opacity-60">
           Say Hello ↗
-        </button>
+        </a>
       </nav>
     </header>
   );

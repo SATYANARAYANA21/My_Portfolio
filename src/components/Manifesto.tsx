@@ -105,6 +105,18 @@ export default function Manifesto() {
           </blockquote>
           <Exp02AshenOneCard />
         </div>
+
+        <footer className="relative z-10 mt-10 border-t border-paper/15 pt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-paper/65 lg:grid lg:grid-cols-[minmax(0,43fr)_minmax(0,57fr)] lg:gap-x-[clamp(2.25rem,3.5vw,4.5rem)]">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <a
+              href="#top"
+              className="inline-flex min-h-8 w-fit items-center border border-paper/35 bg-ink/60 px-3 py-1.5 text-paper/95 shadow-[0_1px_5px_rgb(0_0_0/0.35)] transition-colors hover:border-accent/70 hover:text-paper focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
+            >
+              ↑ Back to start
+            </a>
+            <p className="text-paper/90 [text-shadow:0_1px_3px_rgb(0_0_0/0.85)]">© 2026 SATYA. ALL RIGHTS RESERVED.</p>
+          </div>
+        </footer>
       </div>
     </section>
   );

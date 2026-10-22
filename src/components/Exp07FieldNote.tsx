@@ -144,6 +144,11 @@ export default function Exp07FieldNote() {
         />
       </div>
 
+      <span
+        aria-hidden="true"
+        className="halftone-fade pointer-events-none absolute inset-0 z-[3] opacity-[0.06]"
+      />
+
       <div className={styles.transitionWash} aria-hidden="true" />
 
       {paperTransitionVisible && <Exp07PaperTransition />}

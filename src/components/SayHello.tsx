@@ -156,7 +156,7 @@ export default function SayHello() {
             </div>
 
             <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#4e4038]/80">EXP 06 / CONTACT</p>
-            <h1 className="font-serif text-[clamp(3.15rem,6vw,6.25rem)] font-medium uppercase leading-[0.91] tracking-[-0.045em] text-[#241d19] xl:text-[clamp(2.35rem,4vw,4.2rem)] xl:leading-[0.85]">
+            <h1 className="font-serif text-[clamp(3.15rem,6vw,6.25rem)] font-medium uppercase leading-[0.91] tracking-[-0.045em] text-[#241d19] max-[480px]:text-[clamp(2.45rem,10.8vw,3.15rem)] xl:text-[clamp(2.35rem,4vw,4.2rem)] xl:leading-[0.85]">
               LET&apos;S BUILD<br />SOMETHING<br /><span className="text-[#9c392f]">MEANINGFUL.</span>
             </h1>
             <p className="mt-3 max-w-[27rem] text-base font-medium leading-[1.45] text-[#1f1916] drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] sm:text-lg xl:text-[15px] xl:font-semibold">

@@ -213,10 +213,14 @@
 
 @media (max-width: 640px) {
   .bookHitArea {
-    top: calc(50% - 9vw);
-    left: 38.5%;
-    width: 23%;
-    height: 26.45vw;
+    top: 29%;
+    left: 27%;
+    width: 46%;
+    height: 54%;
+  }
+
+  .openArtwork {
+    object-fit: contain;
   }
 
   .controls {
@@ -224,7 +228,7 @@
   }
 
   .button {
-    min-height: 36px;
+    min-height: 44px;
     gap: 6px;
     padding-inline: 11px;
     font-size: 9px;

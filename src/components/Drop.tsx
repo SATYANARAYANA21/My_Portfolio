@@ -283,7 +283,7 @@ export default function Drop() {
         */}
         <div className="absolute inset-x-0 top-0 bottom-[140px] flex items-center justify-center">
           <motion.div
-            className="relative z-10 w-[240px] h-[320px] md:w-[320px] md:h-[420px] pointer-events-none"
+            className="relative z-10 h-[260px] w-[195px] pointer-events-none md:h-[420px] md:w-[320px]"
             style={{
               y,
               rotateX,
@@ -332,7 +332,7 @@ export default function Drop() {
         </div>
 
         {/* BOTTOM TEXT AND LOCATION */}
-        <div className="absolute bottom-8 inset-x-0 z-20 flex flex-col items-center gap-2 text-center pointer-events-none px-6">
+        <div className="absolute bottom-8 inset-x-0 z-20 flex flex-col items-center gap-2 pb-20 text-center pointer-events-none px-6 md:pb-0">
           <p className="font-mono text-step--2 uppercase tracking-ultrawide text-ink/45">
             落 · SANKA SATYANARAYANA
           </p>
@@ -344,7 +344,8 @@ export default function Drop() {
           {/* MOBILE ONLY: Left Information mirrored for small screens where it's hidden */}
           <div className="md:hidden flex flex-col items-center gap-1 mt-3 text-ink/60 font-sans text-step--1">
              <p className="text-ink">Computer Science · Builder · AI Explorer</p>
-             <p className="text-[11px]">B.Tech CSE · Raghu Engineering College</p>
+             <p className="text-[11px]">B.Tech CSE · Raghu Engineering College · 2023—2027</p>
+             <p className="max-w-[34ch] text-[11px] leading-relaxed">I build software, explore AI, and turn ideas into useful things.</p>
           </div>
         </div>
         
